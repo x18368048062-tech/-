@@ -2215,17 +2215,11 @@ function restore(){
   }catch(e){}
 }
 
-/* ================= 云端连接（登录 / 导出记录 / 我的后台） =================
-   · 本工作台**只有线上一种模式**：必须用正式链接打开
-     （https://planbook-2027.app.workbuddy.host/）。
-     账号来自云端、导出记录写入云端、管理员在「我的后台」看全部账号的汇总。
-   ⚠️ 云服务的登录与数据库读写都要求「已登记的正式域名」（服务端做 Origin 精确校验），
-      因此本地双击（file://）或其它域名打开时**一律拒绝登录**，只提示改走正式链接。
-      没有本地内置账号、没有本机暂存队列——这是刻意设计：
-      任何一次导出都必须落到云端，否则管理员的汇总就看不全。
-   ⚠️ 登录状态不做持久化：每次打开或刷新页面都需重新登录。
-   ⚠️ 账号与记录两张表对前端完全不可见（RLS 开启且无任何策略），
-      前端只能调下面四个 SECURITY DEFINER 函数，凭据在函数内部校验。 */
+/* ================= WorkBuddy 云端功能（仅正式 WorkBuddy 域名使用） =================
+   GitHub Pages、file:// 与 localhost 使用独立模式，不加载 SDK、不调用云函数；
+   计划书计算与导出可用，方案历史只保存在当前浏览器，云端账号管理和共享记录不可用。
+   正式 WorkBuddy 域名继续保留原有的云端登录、记录和管理流程。
+*/
 const CLOUD_CFG = {
   endpoint: 'https://planbook-2027.app.workbuddy.host',
   publishableKey: 'wbpk_NUxbMltkxYcuaqyIZo9BJI_O9JIeqgsqTWdugF0qLaVzHsYv6z3OUml'
@@ -2238,9 +2232,11 @@ window.PLANBOOK_TAIYING_SETTINGS=()=>({contract:taiyingAccount,accountLevel:taiy
 const PLAN_NAME = ()=> taiyingFrame?`泰盈人生庆典A款 · ${taiyingAccount}`:prod().plan;
 
 const CLOUD_HOST = (()=>{ try{ return new URL(CLOUD_CFG.endpoint).hostname; }catch(e){ return ''; } })();
-/* 是否运行在「已登记的正式域名」上。服务端对 Origin 做精确校验，
-   不满足时云端登录必然失败 —— 所以不做降级，直接拒绝登录。 */
-const LOCAL_WORKSPACE = location.protocol === 'file:' || ['localhost','127.0.0.1','[::1]'].includes(location.hostname);
+/* GitHub Pages 与本机一样只使用浏览器本地功能，不访问 WorkBuddy 后端。 */
+const GITHUB_PAGES_HOST = 'x18368048062-tech.github.io';
+const LOCAL_WORKSPACE = location.protocol === 'file:'
+  || ['localhost','127.0.0.1','[::1]'].includes(location.hostname)
+  || (location.protocol === 'https:' && location.hostname === GITHUB_PAGES_HOST);
 const ONLINE = location.protocol === 'https:' && location.hostname === CLOUD_HOST;
 const ONLY_ONLINE_TITLE = '本工作台仅支持线上使用';
 const ONLINE_URL = CLOUD_CFG.endpoint + '/';
@@ -2261,6 +2257,7 @@ function loadSdk(){
   return __sdkP;
 }
 async function getCloud(){
+  if(LOCAL_WORKSPACE) throw new Error('当前独立工作台不连接 WorkBuddy 后端。');
   if(__cloud) return __cloud;
   const g = await loadSdk();
   __cloud = g.createWorkBuddyCloud({ endpoint: CLOUD_CFG.endpoint, publishableKey: CLOUD_CFG.publishableKey });
