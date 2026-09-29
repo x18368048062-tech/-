@@ -1,6 +1,6 @@
 .DS_Store
 backups/
-imported-backup-20260928/
+imported-backup-*/
 workspace-data.js
 check-workspace.cjs
 IMPORT.md
