@@ -1,0 +1,28 @@
+{
+  "zx": {
+    "filename": "【鑫享世家2027（尊享版）+交清增额】利益演示（下发版）.xls",
+    "sha256": "3adb0ff46cd1b2aa7bce148bbaac0f6e8380e9b76f73b487bc5da51846bc9820",
+    "terms": [
+      1,
+      3,
+      5,
+      10
+    ],
+    "baseRows": 39067,
+    "paidUpRows": 39067
+  },
+  "qd30": {
+    "filename": "【鑫享世家（庆典30）+交清增额】利益演示.xlsb",
+    "sha256": "db4f655dbd3576a957c4c8e023b71fef686bfb15b43379c0176e7136c4892a28",
+    "terms": [
+      1,
+      3,
+      6,
+      10,
+      15,
+      20
+    ],
+    "baseRows": 56376,
+    "paidUpRows": 56376
+  }
+}

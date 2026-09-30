@@ -8,6 +8,8 @@ IMPORT.md
 *.xlsx
 *.csv
 *.json
+!validation/source-manifest.json
+!validation/source-examples.json
 .env
 .env.*
 !.env.example
